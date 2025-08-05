@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use Patressz\Skeleton\ExampleServiceProvider;
+use Orchestra\Testbench\Concerns\WithWorkbench;
+use Patressz\LaravelModelDocumenter\LaravelDocumenterServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
+    use WithWorkbench;
+
     /**
      * Setup the test environment.
      */
@@ -32,7 +35,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     protected function getPackageProviders($app): array
     {
         return [
-            ExampleServiceProvider::class,
+            LaravelDocumenterServiceProvider::class
         ];
     }
 }

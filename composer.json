@@ -1,11 +1,11 @@
 {
-    "name": "patressz/skeleton-php",
-    "description": "A skeleton PHP package for Laravel.",
+    "name": "patressz/laravel-model-documenter",
+    "description": "A Laravel package for generating model documentation.",
     "keywords": [
         "php",
         "laravel",
         "package",
-        "skeleton"
+        "documentation"
     ],
     "license": "MIT",
     "authors": [
@@ -19,6 +19,7 @@
     },
     "require-dev": {
         "laravel/pint": "^1.23.0",
+        "orchestra/canvas": "^10.0",
         "orchestra/testbench": "^10.4",
         "pestphp/pest": "^4.0.0",
         "pestphp/pest-plugin-type-coverage": "^4.0.0",
@@ -28,12 +29,20 @@
     },
     "autoload": {
         "psr-4": {
-            "Patressz\\Skeleton\\": "src/"
+            "Patressz\\LaravelModelDocumenter\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Patressz\\LaravelModelDocumenter\\LaravelDocumenterServiceProvider"
+            ]
         }
     },
     "minimum-stability": "dev",
@@ -59,6 +68,12 @@
             "@test:unit",
             "@test:types",
             "@test:refactor"
-        ]
+        ],
+        "post-autoload-dump": [
+            "@clear",
+            "@prepare"
+        ],
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi"
     }
 }
