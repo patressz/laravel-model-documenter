@@ -13,7 +13,7 @@ use Patressz\LaravelModelDocumenter\Resolvers\ModelCastTypeResolver;
 use Workbench\App\Models\User;
 
 describe('ModelCastTypeResolver', function () {
-    it('resolves collection cast correctly', function (string $castType) {
+    it('resolves collection cast correctly', function ($castType) {
         $resolver = new ModelCastTypeResolver();
 
         expect($resolver->resolve($castType))->toBe('\Illuminate\Support\Collection<int, \Workbench\App\Models\User>');
