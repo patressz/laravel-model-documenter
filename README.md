@@ -1,6 +1,6 @@
 # Laravel Model Documenter
 
-[![Tests](https://github.com/patressz/laravel-model-documenter/actions/workflows/tests.yml/badge.svg)](https://github.com/patressz/laravel-pdf/actions/workflows/tests.yml)
+[![Tests](https://github.com/patressz/laravel-model-documenter/actions/workflows/tests.yml/badge.svg)](https://github.com/patressz/laravel-model-documenter/actions/workflows/tests.yml)
 
 A simple Laravel package for automatic generation of PHPDoc comments for Eloquent models. The package automatically analyzes database columns, relations, accessors, and scope methods of your models and generates properly typed PHPDoc annotations.
 
