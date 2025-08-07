@@ -3,11 +3,9 @@
 declare(strict_types=1);
 
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
-use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Casts\AsEncryptedArrayObject;
 use Illuminate\Database\Eloquent\Casts\AsEncryptedCollection;
 use Illuminate\Database\Eloquent\Casts\AsEnumArrayObject;
-use Illuminate\Database\Eloquent\Casts\AsEnumCollection;
 use Illuminate\Database\Eloquent\Casts\AsStringable;
 use Patressz\LaravelModelDocumenter\Resolvers\ModelCastTypeResolver;
 use Workbench\App\Models\User;
@@ -18,15 +16,9 @@ describe('ModelCastTypeResolver', function () {
 
         expect($resolver->resolve($castType))->toBe('\Illuminate\Support\Collection<int, \Workbench\App\Models\User>');
     })->with([
-        fn () => AsCollection::of(User::class),
-        fn () => AsEnumCollection::of(User::class),
-    ])
-    ->skip(function () {
-        $laravelVersion = app()->version();
-
-        return version_compare($laravelVersion, '11.0', '<');
-        
-    }, 'AsCollection::of() and AsEnumCollection::of() require Laravel 11+');
+        '\Illuminate\Database\Eloquent\Casts\AsCollection:,Workbench\App\Models\User',
+        '\Illuminate\Database\Eloquent\Casts\AsEnumCollection:Workbench\App\Models\User',
+    ]);
 
     it('resolves enum array object cast correctly', function () {
         $resolver = new ModelCastTypeResolver();
