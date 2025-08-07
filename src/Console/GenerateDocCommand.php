@@ -66,7 +66,7 @@ final class GenerateDocCommand extends Command
      */
     private function handleSingleModel(ModelDocumenter $documenter, string $modelClass, bool $testMode = false, bool $ciMode = false): void
     {
-        if (! str_starts_with('App\Models\\', $modelClass)) {
+        if (! str_starts_with($modelClass, 'App\\Models\\')) {
             $modelClass = 'App\\Models\\'.$modelClass;
         }
 
