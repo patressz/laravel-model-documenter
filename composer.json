@@ -5,7 +5,8 @@
         "php",
         "laravel",
         "package",
-        "documentation"
+        "documentation",
+        "dev"
     ],
     "license": "MIT",
     "authors": [
