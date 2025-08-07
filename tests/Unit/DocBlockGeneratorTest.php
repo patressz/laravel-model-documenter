@@ -7,6 +7,14 @@ use Patressz\LaravelModelDocumenter\Resolvers\DatabaseColumnTypeResolver;
 use Patressz\LaravelModelDocumenter\Resolvers\ModelCastTypeResolver;
 use Workbench\App\Models\User;
 
+/**
+ * Normalize line endings for cross-platform testing
+ */
+function normalizeLineEndings(string $text): string
+{
+    return str_replace(["\r\n", "\r"], "\n", $text);
+}
+
 beforeEach(function () {
     $this->generator = new DocBlockGenerator(
         new DatabaseColumnTypeResolver,
@@ -33,16 +41,15 @@ describe('DocBlockGenerator', function () {
         $docBlock = $this->generator->generate($columns, User::class);
 
         $expectedDocBlock = <<<'EOD'
-/**
- * @property int $id
- */
-EOD;
+        /**
+         * @property int $id
+         */
+        EOD;
 
-        expect($docBlock)->toBe($expectedDocBlock);
+        expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
     });
 
     it('generates nullable property tag', function () {
-
         $columns = [
             [
                 'name' => 'description',
@@ -60,12 +67,12 @@ EOD;
         $docBlock = $this->generator->generate($columns, User::class);
 
         $expectedDocBlock = <<<'EOD'
-/**
- * @property ?string $description
- */
-EOD;
+        /**
+         * @property ?string $description
+         */
+        EOD;
 
-        expect($docBlock)->toBe($expectedDocBlock);
+        expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
     });
 
     it('generates property tag with column comment', function () {
@@ -86,12 +93,12 @@ EOD;
         $docBlock = $this->generator->generate($columns, User::class);
 
         $expectedDocBlock = <<<'EOD'
-/**
- * @property string $status User status field
- */
-EOD;
+        /**
+         * @property string $status User status field
+         */
+        EOD;
 
-        expect($docBlock)->toBe($expectedDocBlock);
+        expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
     });
 
     it('handles created_at and updated_at timestamps correctly', function () {
@@ -123,13 +130,13 @@ EOD;
         $docBlock = $this->generator->generate($columns, User::class);
 
         $expectedDocBlock = <<<'EOD'
-/**
- * @property ?\Illuminate\Support\Carbon $created_at
- * @property ?\Illuminate\Support\Carbon $updated_at
- */
-EOD;
+        /**
+         * @property ?\Illuminate\Support\Carbon $created_at
+         * @property ?\Illuminate\Support\Carbon $updated_at
+         */
+        EOD;
 
-        expect($docBlock)->toBe($expectedDocBlock);
+        expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
     });
 
     it('handles casted properties correctly', function () {
@@ -161,13 +168,13 @@ EOD;
         $docBlock = $this->generator->generate($columns, User::class);
 
         $expectedDocBlock = <<<'EOD'
-/**
- * @property ?\Illuminate\Support\Carbon $birth_date
- * @property ?\Carbon\CarbonImmutable $deleted_at
- */
-EOD;
+        /**
+         * @property ?\Illuminate\Support\Carbon $birth_date
+         * @property ?\Carbon\CarbonImmutable $deleted_at
+         */
+        EOD;
 
-        expect($docBlock)->toBe($expectedDocBlock);
+        expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
     });
 
     it('handles different numeric types correctly', function () {
@@ -210,14 +217,14 @@ EOD;
         $docBlock = $this->generator->generate($columns, User::class);
 
         $expectedDocBlock = <<<'EOD'
-/**
- * @property ?int $age
- * @property ?float $salary
- * @property float $rating
- */
-EOD;
+        /**
+         * @property ?int $age
+         * @property ?float $salary
+         * @property float $rating
+         */
+        EOD;
 
-        expect($docBlock)->toBe($expectedDocBlock);
+        expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
     });
 
     it('handles text column types correctly', function () {
@@ -260,14 +267,14 @@ EOD;
         $docBlock = $this->generator->generate($columns, User::class);
 
         $expectedDocBlock = <<<'EOD'
-/**
- * @property string $name
- * @property ?string $bio
- * @property ?string $summary
- */
-EOD;
+        /**
+         * @property string $name
+         * @property ?string $bio
+         * @property ?string $summary
+         */
+        EOD;
 
-        expect($docBlock)->toBe($expectedDocBlock);
+        expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
     });
 
     it('handles boolean columns correctly', function () {
@@ -299,13 +306,13 @@ EOD;
         $docBlock = $this->generator->generate($columns, User::class);
 
         $expectedDocBlock = <<<'EOD'
-/**
- * @property int $is_active
- * @property ?bool $is_verified
- */
-EOD;
+        /**
+         * @property int $is_active
+         * @property ?bool $is_verified
+         */
+        EOD;
 
-        expect($docBlock)->toBe($expectedDocBlock);
+        expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
     });
 
     it('handles json columns correctly', function () {
@@ -337,13 +344,13 @@ EOD;
         $docBlock = $this->generator->generate($columns, User::class);
 
         $expectedDocBlock = <<<'EOD'
-/**
- * @property ?string $metadata
- * @property string $settings User settings
- */
-EOD;
+        /**
+         * @property ?string $metadata
+         * @property string $settings User settings
+         */
+        EOD;
 
-        expect($docBlock)->toBe($expectedDocBlock);
+        expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
     });
 
     it('handles mixed column types in single generation', function () {
@@ -397,14 +404,14 @@ EOD;
         $docBlock = $this->generator->generate($columns, User::class);
 
         $expectedDocBlock = <<<'EOD'
-/**
- * @property int $id
- * @property string $name
- * @property ?int $age User age in years
- * @property ?\Illuminate\Support\Carbon $created_at
- */
-EOD;
+        /**
+         * @property int $id
+         * @property string $name
+         * @property ?int $age User age in years
+         * @property ?\Illuminate\Support\Carbon $created_at
+         */
+        EOD;
 
-        expect($docBlock)->toBe($expectedDocBlock);
+        expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
     });
 });
