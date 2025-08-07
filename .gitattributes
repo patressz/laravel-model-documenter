@@ -14,3 +14,6 @@ rector.php         export-ignore
 CHANGELOG.md       export-ignore
 CONTRIBUTING.md    export-ignore
 README.md          export-ignore
+testbench.yml      export-ignore
+/workbench         export-ignore
+pint.json          export-ignore
