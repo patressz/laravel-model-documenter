@@ -10,15 +10,7 @@ use Patressz\LaravelModelDocumenter\LaravelDocumenterServiceProvider;
 class TestCase extends \Orchestra\Testbench\TestCase
 {
     use WithWorkbench;
-
-    /**
-     * Setup the test environment.
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
+    
     /**
      * Define environment setup.
      */
