@@ -3,6 +3,9 @@ laravel: './workbench'
 providers:
   # - Workbench\App\Providers\WorkbenchServiceProvider
 
+migrations:
+  - workbench/database/migrations
+
 workbench:
   discovers:
     web: true
