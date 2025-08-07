@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-use Workbench\App\Models\User;
-use Illuminate\Database\Eloquent\Casts\AsCollection;
-use Illuminate\Database\Eloquent\Casts\AsStringable;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
+use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Casts\AsEncryptedArrayObject;
 use Illuminate\Database\Eloquent\Casts\AsEncryptedCollection;
-use Illuminate\Database\Eloquent\Casts\AsEnumCollection;
 use Illuminate\Database\Eloquent\Casts\AsEnumArrayObject;
+use Illuminate\Database\Eloquent\Casts\AsEnumCollection;
+use Illuminate\Database\Eloquent\Casts\AsStringable;
 use Patressz\LaravelModelDocumenter\Resolvers\ModelCastTypeResolver;
+use Workbench\App\Models\User;
 
 describe('ModelCastTypeResolver', function () {
     it('resolves collection cast correctly', function (string $castType) {
