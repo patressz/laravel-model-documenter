@@ -127,7 +127,7 @@ final readonly class DocBlockGenerator
             $properties[] = new PhpDocTagNode('@property-read', $propertyTag);
         }
 
-        if ($model instanceof Notifiable) {
+        if (in_array(Notifiable::class, class_uses($model, true))) {
             $typeNode = new IdentifierTypeNode('\Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification>');
             $propertyTag = new PropertyTagValueNode(
                 $typeNode,
