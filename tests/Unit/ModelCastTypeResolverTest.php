@@ -20,7 +20,13 @@ describe('ModelCastTypeResolver', function () {
     })->with([
         fn () => AsCollection::of(User::class),
         fn () => AsEnumCollection::of(User::class),
-    ]);
+    ])
+    ->skip(function () {
+        $laravelVersion = app()->version();
+
+        return version_compare($laravelVersion, '11.0', '<');
+        
+    }, 'AsCollection::of() and AsEnumCollection::of() require Laravel 11+');
 
     it('resolves enum array object cast correctly', function () {
         $resolver = new ModelCastTypeResolver();
