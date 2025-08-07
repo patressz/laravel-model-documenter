@@ -6,8 +6,8 @@ A simple Laravel package for automatic generation of PHPDoc comments for Eloquen
 
 ## Requirements
 
-- PHP 8.4+
-- Laravel 10.0+
+- PHP 8.3+
+- Laravel 11.0+
 
 ## Installation
 
