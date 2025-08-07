@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Patressz\LaravelModelDocumenter;
 
 use Closure;
-use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -432,7 +431,7 @@ final readonly class DocBlockGenerator
             }
 
             foreach ($reflectionMethod->getAttributes() as $attribute) {
-                if ($attribute->getName() === Scope::class) {
+                if ($attribute->getName() === 'Illuminate\Database\Eloquent\Attributes\Scope') {
                     $methodName = $reflectionMethod->getName();
 
                     if (! in_array($methodName, array_column($localScopes, 'name'))) {
