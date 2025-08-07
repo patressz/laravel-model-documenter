@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Patressz\LaravelModelDocumenter\Resolvers\DatabaseColumnTypeResolver;
 use Patressz\LaravelModelDocumenter\Resolvers\ModelCastTypeResolver;
@@ -120,6 +121,17 @@ final readonly class DocBlockGenerator
             $propertyTag = new PropertyTagValueNode(
                 $typeNode,
                 sprintf('$%s', $relation['name']),
+                '',
+            );
+
+            $properties[] = new PhpDocTagNode('@property-read', $propertyTag);
+        }
+
+        if ($model instanceof Notifiable) {
+            $typeNode = new IdentifierTypeNode('\Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification>');
+            $propertyTag = new PropertyTagValueNode(
+                $typeNode,
+                '$notifications',
                 '',
             );
 
