@@ -33,10 +33,10 @@ describe('DocBlockGenerator', function () {
         $docBlock = $this->generator->generate($columns, User::class);
 
         $expectedDocBlock = <<<'EOD'
-        /**
-         * @property int $id
-         */
-        EOD;
+/**
+ * @property int $id
+ */
+EOD;
 
         expect($docBlock)->toBe($expectedDocBlock);
     });
@@ -60,10 +60,10 @@ describe('DocBlockGenerator', function () {
         $docBlock = $this->generator->generate($columns, User::class);
 
         $expectedDocBlock = <<<'EOD'
-        /**
-         * @property ?string $description
-         */
-        EOD;
+/**
+ * @property ?string $description
+ */
+EOD;
 
         expect($docBlock)->toBe($expectedDocBlock);
     });
@@ -86,10 +86,10 @@ describe('DocBlockGenerator', function () {
         $docBlock = $this->generator->generate($columns, User::class);
 
         $expectedDocBlock = <<<'EOD'
-        /**
-         * @property string $status User status field
-         */
-        EOD;
+/**
+ * @property string $status User status field
+ */
+EOD;
 
         expect($docBlock)->toBe($expectedDocBlock);
     });
@@ -123,11 +123,11 @@ describe('DocBlockGenerator', function () {
         $docBlock = $this->generator->generate($columns, User::class);
 
         $expectedDocBlock = <<<'EOD'
-        /**
-         * @property ?\Illuminate\Support\Carbon $created_at
-         * @property ?\Illuminate\Support\Carbon $updated_at
-         */
-        EOD;
+/**
+ * @property ?\Illuminate\Support\Carbon $created_at
+ * @property ?\Illuminate\Support\Carbon $updated_at
+ */
+EOD;
 
         expect($docBlock)->toBe($expectedDocBlock);
     });
@@ -161,11 +161,11 @@ describe('DocBlockGenerator', function () {
         $docBlock = $this->generator->generate($columns, User::class);
 
         $expectedDocBlock = <<<'EOD'
-        /**
-         * @property ?\Illuminate\Support\Carbon $birth_date
-         * @property ?\Carbon\CarbonImmutable $deleted_at
-         */
-        EOD;
+/**
+ * @property ?\Illuminate\Support\Carbon $birth_date
+ * @property ?\Carbon\CarbonImmutable $deleted_at
+ */
+EOD;
 
         expect($docBlock)->toBe($expectedDocBlock);
     });
@@ -210,12 +210,12 @@ describe('DocBlockGenerator', function () {
         $docBlock = $this->generator->generate($columns, User::class);
 
         $expectedDocBlock = <<<'EOD'
-        /**
-         * @property ?int $age
-         * @property ?float $salary
-         * @property float $rating
-         */
-        EOD;
+/**
+ * @property ?int $age
+ * @property ?float $salary
+ * @property float $rating
+ */
+EOD;
 
         expect($docBlock)->toBe($expectedDocBlock);
     });
@@ -260,12 +260,12 @@ describe('DocBlockGenerator', function () {
         $docBlock = $this->generator->generate($columns, User::class);
 
         $expectedDocBlock = <<<'EOD'
-        /**
-         * @property string $name
-         * @property ?string $bio
-         * @property ?string $summary
-         */
-        EOD;
+/**
+ * @property string $name
+ * @property ?string $bio
+ * @property ?string $summary
+ */
+EOD;
 
         expect($docBlock)->toBe($expectedDocBlock);
     });
@@ -299,11 +299,11 @@ describe('DocBlockGenerator', function () {
         $docBlock = $this->generator->generate($columns, User::class);
 
         $expectedDocBlock = <<<'EOD'
-        /**
-         * @property int $is_active
-         * @property ?bool $is_verified
-         */
-        EOD;
+/**
+ * @property int $is_active
+ * @property ?bool $is_verified
+ */
+EOD;
 
         expect($docBlock)->toBe($expectedDocBlock);
     });
@@ -337,11 +337,11 @@ describe('DocBlockGenerator', function () {
         $docBlock = $this->generator->generate($columns, User::class);
 
         $expectedDocBlock = <<<'EOD'
-        /**
-         * @property ?string $metadata
-         * @property string $settings User settings
-         */
-        EOD;
+/**
+ * @property ?string $metadata
+ * @property string $settings User settings
+ */
+EOD;
 
         expect($docBlock)->toBe($expectedDocBlock);
     });
@@ -397,13 +397,13 @@ describe('DocBlockGenerator', function () {
         $docBlock = $this->generator->generate($columns, User::class);
 
         $expectedDocBlock = <<<'EOD'
-        /**
-         * @property int $id
-         * @property string $name
-         * @property ?int $age User age in years
-         * @property ?\Illuminate\Support\Carbon $created_at
-         */
-        EOD;
+/**
+ * @property int $id
+ * @property string $name
+ * @property ?int $age User age in years
+ * @property ?\Illuminate\Support\Carbon $created_at
+ */
+EOD;
 
         expect($docBlock)->toBe($expectedDocBlock);
     });
