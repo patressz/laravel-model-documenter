@@ -16,7 +16,7 @@ describe('ModelCastTypeResolver', function () {
     it('resolves collection cast correctly', function ($castType) {
         $resolver = new ModelCastTypeResolver();
 
-        expect($resolver->resolve($castType))->toBe('\Illuminate\Support\Collection<int, \Workbench\App\Models\User>');
+        expect($resolver->resolve((string) $castType))->toBe('\Illuminate\Support\Collection<int, \Workbench\App\Models\User>');
     })->with([
         AsCollection::of(User::class),
         AsEnumCollection::of(User::class),
@@ -25,7 +25,7 @@ describe('ModelCastTypeResolver', function () {
     it('resolves enum array object cast correctly', function () {
         $resolver = new ModelCastTypeResolver();
 
-        expect($resolver->resolve(AsEnumArrayObject::of(User::class)))->toBe('\ArrayObject<int, \Workbench\App\Models\User>');
+        expect($resolver->resolve((string) AsEnumArrayObject::of(User::class)))->toBe('\ArrayObject<int, \Workbench\App\Models\User>');
     });
 
     it('resolves integer cast to `int`', function (string $castType) {
