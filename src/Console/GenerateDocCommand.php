@@ -52,13 +52,13 @@ final class GenerateDocCommand extends Command
             $testMode = true;
         }
 
-        if ($modelClass) {
-            $this->handleSingleModel($documenter, $modelClass, $testMode, $ciMode);
+        if (is_string($modelClass)) {
+            $this->handleSingleModel($documenter, $modelClass, (bool) $testMode, (bool) $ciMode);
 
             return;
         }
 
-        $this->handleDirectory($documenter, $testMode, $ciMode);
+        $this->handleDirectory($documenter, (bool) $testMode, (bool) $ciMode);
     }
 
     /**
@@ -66,6 +66,10 @@ final class GenerateDocCommand extends Command
      */
     private function handleSingleModel(ModelDocumenter $documenter, string $modelClass, bool $testMode = false, bool $ciMode = false): void
     {
+        if (! str_starts_with('App\Models\\', $modelClass)) {
+            $modelClass = 'App\\Models\\'.$modelClass;
+        }
+
         if (! class_exists($modelClass)) {
             $this->error("Model class not found: {$modelClass}");
 
@@ -91,7 +95,8 @@ final class GenerateDocCommand extends Command
             if ($result['success']) {
                 $this->info("✓ Successfully processed {$result['class']}.");
             } else {
-                $this->error("✗ Failed to process {$result['class']}: {$result['error']}");
+                $error = $result['error'] ?? 'Unknown error';
+                $this->error("✗ Failed to process {$result['class']}: {$error}");
             }
         }
     }
@@ -101,7 +106,8 @@ final class GenerateDocCommand extends Command
      */
     private function handleDirectory(ModelDocumenter $documenter, bool $testMode = false, bool $ciMode = false): void
     {
-        $path = $this->option('path') ?: app_path('Models');
+        $pathOption = $this->option('path');
+        $path = is_string($pathOption) ? $pathOption : app_path('Models');
 
         if (! is_dir($path)) {
             $this->error("Directory not found: {$path}");
@@ -128,7 +134,8 @@ final class GenerateDocCommand extends Command
                 $this->warn("Failed to process {$failed->count()} models:");
 
                 foreach ($failed as $result) {
-                    $this->error("  - {$result['class']}: {$result['error']}");
+                    $error = $result['error'] ?? 'Unknown error';
+                    $this->error("  - {$result['class']}: {$error}");
                 }
             }
 
@@ -140,6 +147,8 @@ final class GenerateDocCommand extends Command
 
     /**
      * Test documentation for a single model.
+     *
+     * @param  class-string  $modelClass
      */
     private function testModel(string $modelClass, bool $ciMode = false): void
     {
@@ -180,8 +189,15 @@ final class GenerateDocCommand extends Command
         foreach ($models as $modelData) {
             $modelClass = $modelData['class'];
 
-            $currentDocBlock = $this->extractCurrentDocBlock($modelClass);
-            $expectedDocBlock = $this->getExpectedDocBlock($modelClass);
+            if (! class_exists($modelClass)) {
+                continue;
+            }
+
+            /** @var class-string $classString */
+            $classString = $modelClass;
+
+            $currentDocBlock = $this->extractCurrentDocBlock($classString);
+            $expectedDocBlock = $this->getExpectedDocBlock($classString);
 
             if ($currentDocBlock === null) {
                 $currentDocBlock = '';
@@ -194,7 +210,7 @@ final class GenerateDocCommand extends Command
                     $outdatedModels[] = $modelClass;
                 }
             } else {
-                $this->testModel($modelClass, false);
+                $this->testModel($classString, false);
                 $this->newLine();
             }
         }
@@ -214,6 +230,8 @@ final class GenerateDocCommand extends Command
 
     /**
      * Extract current PHPDoc block from model class using Reflection.
+     *
+     * @param  class-string  $modelClass
      */
     private function extractCurrentDocBlock(string $modelClass): ?string
     {
@@ -240,10 +258,27 @@ final class GenerateDocCommand extends Command
 
     /**
      * Get expected PHPDoc block from documenter.
+     *
+     * @param  class-string  $modelClass
      */
     private function getExpectedDocBlock(string $modelClass): string
     {
+        /** @var \Illuminate\Database\Eloquent\Model $model */
         $model = app()->make($modelClass);
+
+        /**
+         * @var array<int, array{
+         *     name: string,
+         *     type_name: string,
+         *     type: string,
+         *     collation: ?string,
+         *     nullable: bool,
+         *     default: ?string,
+         *     auto_increment: bool,
+         *     comment: ?string,
+         *     generation: ?string
+         * }> $columns
+         */
         $columns = Schema::getColumns($model->getTable());
 
         return $this->docBlockGenerator->generate($columns, $modelClass);
@@ -266,17 +301,20 @@ final class GenerateDocCommand extends Command
         $allMatch = true;
 
         foreach ($diff as $operation) {
-            switch ($operation['type']) {
+            $type = $operation['type'];
+            $line = (string) $operation['line'];
+
+            switch ($type) {
                 case 'equal':
-                    $this->line("<fg=white;>  ✓ {$operation['line']}</fg=white;>");
+                    $this->line("<fg=white;>  ✓ {$line}</fg=white;>");
                     break;
                 case 'delete':
                     $allMatch = false;
-                    $this->line("<fg=red;>  - {$operation['line']}</fg=red;>");
+                    $this->line("<fg=red;>  - {$line}</fg=red;>");
                     break;
                 case 'insert':
                     $allMatch = false;
-                    $this->line("<fg=green;>  + {$operation['line']}</fg=green;>");
+                    $this->line("<fg=green;>  + {$line}</fg=green;>");
                     break;
             }
         }
@@ -290,6 +328,10 @@ final class GenerateDocCommand extends Command
 
     /**
      * Calculate diff between two arrays of lines using LCS algorithm.
+     *
+     * @param  array<int, string>  $currentLines
+     * @param  array<int, string>  $expectedLines
+     * @return array<int, array{type: string, line: string}>
      */
     private function calculateDiff(array $currentLines, array $expectedLines): array
     {
@@ -350,6 +392,10 @@ final class GenerateDocCommand extends Command
 
     /**
      * Find longest common subsequence between two arrays.
+     *
+     * @param  array<int, string>  $a
+     * @param  array<int, string>  $b
+     * @return array<int, string>
      */
     private function longestCommonSubsequence(array $a, array $b): array
     {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Patressz\LaravelModelDocumenter;
 
+use Closure;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -28,6 +29,7 @@ use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\NullableTypeNode;
 use PHPStan\PhpDocParser\Printer\Printer;
 use ReflectionClass;
+use ReflectionException;
 use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionNamedType;
@@ -240,7 +242,7 @@ final readonly class DocBlockGenerator
     {
         $relation = $method->invoke($model);
 
-        if (! in_array($relation::class, self::RELATION_TYPES)) {
+        if (! is_object($relation) || ! in_array($relation::class, self::RELATION_TYPES)) {
             return null;
         }
 
@@ -256,10 +258,11 @@ final readonly class DocBlockGenerator
         if ($relationReflection->hasProperty('foreignKey')) {
             $foreignProperty = $relationReflection->getProperty('foreignKey');
             $foreignProperty->setAccessible(true);
-            $foreignKey = $foreignProperty->getValue($relation);
+            $foreignKeyValue = $foreignProperty->getValue($relation);
+            $foreignKey = is_string($foreignKeyValue) ? $foreignKeyValue : null;
         }
 
-        if (! class_exists($relatedModel::class)) {
+        if (! is_object($relatedModel) || ! class_exists($relatedModel::class)) {
             return null;
         }
 
@@ -271,7 +274,7 @@ final readonly class DocBlockGenerator
             'name' => $method->getName(),
             'type' => $relatedClassName,
             'related' => $relatedClassName,
-            'foreign_key' => $foreignKey,
+            'foreign_key' => $foreignKey ?? '',
             'return' => $returnType,
         ];
     }
@@ -313,24 +316,26 @@ final readonly class DocBlockGenerator
         $method->setAccessible(true);
         $oldAccessors = $method->invoke($model, $model);
 
-        foreach ($oldAccessors as $accessor) {
-            if ($accessor !== 'UseFactory') {
-                $accessors[] = [
-                    'name' => lcfirst((string) $accessor),
-                    'type' => 'mixed',
-                    'readable' => true,
-                    'writable' => false, // old accessors are read-only.
-                ];
+        if (is_iterable($oldAccessors)) {
+            foreach ($oldAccessors as $accessor) {
+                if (is_string($accessor) && $accessor !== 'UseFactory') {
+                    $accessors[] = [
+                        'name' => lcfirst($accessor),
+                        'type' => 'mixed',
+                        'readable' => true,
+                        'writable' => false, // old accessors are read-only.
+                    ];
+                }
             }
         }
 
         foreach ($reflectionClass->getMethods() as $reflectionMethod) {
             $returnType = $reflectionMethod->getReturnType();
 
-            if ($returnType && $returnType->getName() === Attribute::class) {
+            if ($returnType instanceof ReflectionNamedType && $returnType->getName() === Attribute::class) {
                 $attributeInfo = $this->analyzeAttributeMethod($model, $reflectionMethod);
 
-                if ($attributeInfo !== null && $attributeInfo !== []) {
+                if ($attributeInfo !== null) {
                     $accessors[] = $attributeInfo;
                 }
             }
@@ -382,17 +387,25 @@ final readonly class DocBlockGenerator
             return 'mixed';
         }
 
-        $callbackReflection = new ReflectionFunction($getCallback);
-        $returnType = $callbackReflection->getReturnType();
+        if (! is_callable($getCallback)) {
+            return 'mixed';
+        }
 
-        if ($returnType) {
-            $typeName = $returnType->getName();
+        try {
+            $callbackReflection = new ReflectionFunction(Closure::fromCallable($getCallback));
+            $returnType = $callbackReflection->getReturnType();
 
-            if ($returnType->allowsNull()) {
-                return sprintf('?%s', $typeName);
+            if ($returnType instanceof ReflectionNamedType) {
+                $typeName = $returnType->getName();
+
+                if ($returnType->allowsNull()) {
+                    return sprintf('?%s', $typeName);
+                }
+
+                return $typeName;
             }
-
-            return $typeName;
+        } catch (ReflectionException) {
+            return 'mixed';
         }
 
         return 'mixed';
