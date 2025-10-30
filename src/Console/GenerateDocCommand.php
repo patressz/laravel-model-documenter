@@ -19,6 +19,7 @@ final class GenerateDocCommand extends Command
      * @var string
      */
     protected $signature = 'model-doc:generate
+                            {model? : Specific model class to generate documentation for}
                             {--path= : Custom path to models directory}
                             {--model= : Specific model class to generate documentation for}
                             {--test : Compare existing PHPDoc with expected documentation}
@@ -43,7 +44,7 @@ final class GenerateDocCommand extends Command
      */
     public function handle(ModelDocumenter $documenter): void
     {
-        $modelClass = $this->option('model');
+        $modelClass = $this->option('model') ?? $this->argument('model');
         $testMode = $this->option('test');
         $ciMode = $this->option('ci');
 
