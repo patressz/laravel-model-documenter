@@ -63,7 +63,7 @@ final class ModelCastTypeResolver
             'bool', 'boolean' => 'bool',
             'object' => 'object',
             'array', 'json', 'json:unicode' => 'array<array-key, mixed>',
-            'collection' => '\Illuminate\Support\Collection',
+            'collection' => '\Illuminate\Support\Collection<array-key, mixed>',
             'date', 'datetime', 'custom_datetime', 'timestamp' => '\Illuminate\Support\Carbon',
             'immutable_date', 'immutable_datetime', 'immutable_custom_datetime' => '\Carbon\CarbonImmutable',
             'hashed', 'encrypted' => 'string',
