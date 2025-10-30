@@ -163,7 +163,7 @@ final readonly class DocBlockGenerator
         foreach ($this->getLocalScopes($model) as $scope) {
             $propertyTag = new PropertyTagValueNode(
                 new IdentifierTypeNode('static'),
-                sprintf('Builder<static>|%s %s()', $scope['model'], $scope['name']),
+                sprintf('\Illuminate\Database\Eloquent\Builder<static>|%s %s()', $scope['model'], $scope['name']),
                 '',
             );
 
