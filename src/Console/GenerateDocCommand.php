@@ -18,7 +18,7 @@ final class GenerateDocCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'model-doc:generate 
+    protected $signature = 'model-doc:generate
                             {--path= : Custom path to models directory}
                             {--model= : Specific model class to generate documentation for}
                             {--test : Compare existing PHPDoc with expected documentation}
@@ -266,20 +266,39 @@ final class GenerateDocCommand extends Command
         /** @var \Illuminate\Database\Eloquent\Model $model */
         $model = app()->make($modelClass);
 
-        /**
-         * @var array<int, array{
-         *     name: string,
-         *     type_name: string,
-         *     type: string,
-         *     collation: ?string,
-         *     nullable: bool,
-         *     default: ?string,
-         *     auto_increment: bool,
-         *     comment: ?string,
-         *     generation: ?string
-         * }> $columns
-         */
-        $columns = Schema::getColumns($model->getTable());
+        $connectionName = $model->getConnectionName();
+
+        if (is_string($connectionName)) {
+            /**
+             * @var array<int, array{
+             *     name: string,
+             *     type_name: string,
+             *     type: string,
+             *     collation: ?string,
+             *     nullable: bool,
+             *     default: ?string,
+             *     auto_increment: bool,
+             *     comment: ?string,
+             *     generation: ?string
+             * }> $columns
+             */
+            $columns = Schema::connection($connectionName)->getColumns($model->getTable());
+        } else {
+            /**
+             * @var array<int, array{
+             *     name: string,
+             *     type_name: string,
+             *     type: string,
+             *     collation: ?string,
+             *     nullable: bool,
+             *     default: ?string,
+             *     auto_increment: bool,
+             *     comment: ?string,
+             *     generation: ?string
+             * }> $columns
+             */
+            $columns = Schema::getColumns($model->getTable());
+        }
 
         return $this->docBlockGenerator->generate($columns, $modelClass);
     }
