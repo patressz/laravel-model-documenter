@@ -71,13 +71,19 @@ describe('ModelCastTypeResolver', function () {
         'json:unicode',
     ]);
 
-    it('resolves collection cast to `\Illuminate\Support\Collection`', function (string $castType) {
+    it('resolves encrypted collection cast to `\Illuminate\Support\Collection`', function (string $castType) {
         $resolver = new ModelCastTypeResolver();
         expect($resolver->resolve($castType))->toBe('\Illuminate\Support\Collection');
     })->with([
-        'collection',
         'encrypted:collection',
         AsEncryptedCollection::class,
+    ]);
+
+    it('resolves collection cast to `\Illuminate\Support\Collection`', function (string $castType) {
+        $resolver = new ModelCastTypeResolver();
+        expect($resolver->resolve($castType))->toBe('\Illuminate\Support\Collection<array-key, mixed>');
+    })->with([
+        'collection',
     ]);
 
     it('resolves datetime cast to `\Illuminate\Support\Carbon`', function (string $castType) {
