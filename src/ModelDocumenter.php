@@ -70,20 +70,39 @@ final readonly class ModelDocumenter
                 ];
             }
 
-            /**
-             * @var array<int, array{
-             *     name: string,
-             *     type_name: string,
-             *     type: string,
-             *     collation: ?string,
-             *     nullable: bool,
-             *     default: ?string,
-             *     auto_increment: bool,
-             *     comment: ?string,
-             *     generation: ?string
-             * }> $columns
-             */
-            $columns = Schema::getColumns($modelInstance->getTable());
+            $connectionName = $modelInstance->getConnectionName();
+
+            if (is_string($connectionName)) {
+                /**
+                 * @var array<int, array{
+                 *     name: string,
+                 *     type_name: string,
+                 *     type: string,
+                 *     collation: ?string,
+                 *     nullable: bool,
+                 *     default: ?string,
+                 *     auto_increment: bool,
+                 *     comment: ?string,
+                 *     generation: ?string
+                 * }> $columns
+                 */
+                $columns = Schema::connection($connectionName)->getColumns($modelInstance->getTable());
+            } else {
+                /**
+                 * @var array<int, array{
+                 *     name: string,
+                 *     type_name: string,
+                 *     type: string,
+                 *     collation: ?string,
+                 *     nullable: bool,
+                 *     default: ?string,
+                 *     auto_increment: bool,
+                 *     comment: ?string,
+                 *     generation: ?string
+                 * }> $columns
+                 */
+                $columns = Schema::getColumns($modelInstance->getTable());
+            }
 
             $docBlock = $this->docBlockGenerator->generate($columns, $className);
 
