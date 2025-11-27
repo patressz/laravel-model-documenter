@@ -65,18 +65,19 @@ For a `User` model with a table containing `id`, `name`, `email`, `email_verifie
 
 ```php
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int $id
  * @property string $name
  * @property string $email
- * @property \Illuminate\Support\Carbon|null $email_verified_at
- * @property array $settings
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property ?\Illuminate\Support\Carbon $email_verified_at
+ * @property array<array-key, mixed> $settings
+ * @property ?\Illuminate\Support\Carbon $created_at
+ * @property ?\Illuminate\Support\Carbon $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Post> $posts
  * 
- * @method static Builder<static>|User active()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User active()
  */
 class User extends Model
 {
