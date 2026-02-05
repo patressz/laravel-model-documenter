@@ -23,25 +23,9 @@ Clone your fork, then install the dev dependencies:
 ```bash
 composer install
 ```
-## Lint
-
-Lint your code:
-```bash
-composer lint
-```
 ## Tests
 
-Run all tests:
+Run tests:
 ```bash
 composer test
-```
-
-Check types:
-```bash
-composer test:types
-```
-
-Unit tests:
-```bash
-composer test:unit
 ```
