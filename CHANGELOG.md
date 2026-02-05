@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## v.1.0.0 - 2026-02-05
+
+- add support for PHP `8.5`
+
+**Full Changelog**: https://github.com/patressz/laravel-model-documenter/compare/v0.3.0...v1.0.0
+
 ## v0.3.0 - 2025-10-30
 
 * fix: update namespace for local scope property tag in `DocBlockGenerator` (00f1e66d61bec8ebb7aab30fcf9a1a99ea9620e5)
