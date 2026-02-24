@@ -409,6 +409,10 @@ final readonly class DocBlockGenerator
             if ($returnType instanceof ReflectionNamedType) {
                 $typeName = $returnType->getName();
 
+                if (class_exists($typeName)) {
+                    $typeName = '\\'.$typeName;
+                }
+
                 if ($returnType->allowsNull()) {
                     return sprintf('?%s', $typeName);
                 }
