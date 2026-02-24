@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.0.1 - 2026-02-24
+
+* fix: ensure fully qualified class names in return type resolution (501731da062dd7742feab851f26fc2b03356f979)
+
 ## v1.0.0 - 2026-02-05
 
 - add support for PHP `8.5`
