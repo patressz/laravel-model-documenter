@@ -45,6 +45,8 @@ final class GenerateDocCommand extends Command
     public function handle(ModelDocumenter $documenter): void
     {
         $modelClass = $this->option('model') ?? $this->argument('model');
+        $pathOption = $this->option('path');
+        $path = is_string($pathOption) ? $pathOption : app_path('Models');
         $testMode = $this->option('test');
         $ciMode = $this->option('ci');
 
@@ -54,22 +56,20 @@ final class GenerateDocCommand extends Command
         }
 
         if (is_string($modelClass)) {
-            $this->handleSingleModel($documenter, $modelClass, (bool) $testMode, (bool) $ciMode);
+            $this->handleSingleModel($documenter, $modelClass, $path, (bool) $testMode, (bool) $ciMode);
 
             return;
         }
 
-        $this->handleDirectory($documenter, (bool) $testMode, (bool) $ciMode);
+        $this->handleDirectory($documenter, $path, (bool) $testMode, (bool) $ciMode);
     }
 
     /**
      * Handle documentation generation for a single model.
      */
-    private function handleSingleModel(ModelDocumenter $documenter, string $modelClass, bool $testMode = false, bool $ciMode = false): void
+    private function handleSingleModel(ModelDocumenter $documenter, string $modelClass, string $path, bool $testMode = false, bool $ciMode = false): void
     {
-        if (! str_starts_with($modelClass, 'App\\Models\\')) {
-            $modelClass = 'App\\Models\\'.$modelClass;
-        }
+        $modelClass = $this->resolveModelClass($modelClass, $path);
 
         if (! class_exists($modelClass)) {
             $this->error("Model class not found: {$modelClass}");
@@ -105,11 +105,8 @@ final class GenerateDocCommand extends Command
     /**
      * Handle documentation generation for a directory of models.
      */
-    private function handleDirectory(ModelDocumenter $documenter, bool $testMode = false, bool $ciMode = false): void
+    private function handleDirectory(ModelDocumenter $documenter, string $path, bool $testMode = false, bool $ciMode = false): void
     {
-        $pathOption = $this->option('path');
-        $path = is_string($pathOption) ? $pathOption : app_path('Models');
-
         if (! is_dir($path)) {
             $this->error("Directory not found: {$path}");
 
@@ -144,6 +141,30 @@ final class GenerateDocCommand extends Command
                 $this->line("  ✓ {$result['class']}.");
             }
         }
+    }
+
+    /**
+     * Resolve model class from input and path.
+     */
+    private function resolveModelClass(string $modelClass, string $path): string
+    {
+        $modelClass = mb_ltrim($modelClass, '\\');
+
+        if (str_contains($modelClass, '\\')) {
+            return $modelClass;
+        }
+
+        if (is_dir($path)) {
+            $models = $this->modelFinder->findModels($path);
+
+            foreach ($models as $modelData) {
+                if ($modelData['class'] === $modelClass || class_basename($modelData['class']) === $modelClass) {
+                    return $modelData['class'];
+                }
+            }
+        }
+
+        return 'App\\Models\\'.$modelClass;
     }
 
     /**
