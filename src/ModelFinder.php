@@ -78,6 +78,8 @@ final class ModelFinder
 
             public ?string $className = null;
 
+            public bool $isAbstract = false;
+
             public function enterNode(Node $node): int|Node|array|null
             {
                 if ($node instanceof Node\Stmt\Namespace_) {
@@ -85,6 +87,7 @@ final class ModelFinder
                 }
 
                 if ($node instanceof Node\Stmt\Class_) {
+                    $this->isAbstract = $node->isAbstract();
                     $this->className = $node->name?->toString();
                 }
 
@@ -95,6 +98,10 @@ final class ModelFinder
         $traverser = new NodeTraverser();
         $traverser->addVisitor($visitor);
         $traverser->traverse($ast);
+
+        if ($visitor->isAbstract) {
+            return null;
+        }
 
         if ($visitor->className === null || $visitor->className === '' || $visitor->className === '0') {
             return null;

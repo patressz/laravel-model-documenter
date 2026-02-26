@@ -60,6 +60,15 @@ final readonly class ModelDocumenter
 
         try {
             $reflectionClass = new ReflectionClass($className);
+
+            if (! $reflectionClass->isInstantiable()) {
+                return [
+                    'success' => false,
+                    'class' => $className,
+                    'error' => 'Class is not instantiable.',
+                ];
+            }
+
             $modelInstance = $reflectionClass->newInstance();
 
             if (! $modelInstance instanceof Model) {
