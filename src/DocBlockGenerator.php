@@ -469,7 +469,7 @@ final readonly class DocBlockGenerator
                 continue;
             }
 
-            return new Printer()->print($readType);
+            return (new Printer)->print($readType);
         }
 
         return null;
