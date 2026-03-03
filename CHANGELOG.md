@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.0.4 - 2026-03-03
+
+**Full Changelog**: https://github.com/patressz/laravel-model-documenter/compare/v1.0.3...v1.0.4
+
 ## v1.0.3 - 2026-03-03
 
 * feat: infer accessor property types from Attribute phpdoc generics (a3ec735d75e86590bc7c5b3eca5d8e5707c4a94e)
