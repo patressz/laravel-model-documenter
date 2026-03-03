@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.0.2 - 2026-02-26
+
+* fix: enhance model resolution in `GenerateDocCommand` to support custom paths (f28a1657879df2787ff8e95cc3d2902c2df49d93)
+* fix: skip abstract models in `ModelFinder` and add corresponding test (dd2ea2d1be423fcc5a451819e9cb42358a065d9c)
+
 ## v1.0.1 - 2026-02-24
 
 * fix: ensure fully qualified class names in return type resolution (501731da062dd7742feab851f26fc2b03356f979)
