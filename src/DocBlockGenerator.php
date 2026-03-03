@@ -25,14 +25,24 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTextNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PropertyTagValueNode;
+use PHPStan\PhpDocParser\Ast\PhpDoc\ReturnTagValueNode;
+use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\NullableTypeNode;
+use PHPStan\PhpDocParser\Ast\Type\TypeNode;
+use PHPStan\PhpDocParser\Lexer\Lexer;
+use PHPStan\PhpDocParser\Parser\ConstExprParser;
+use PHPStan\PhpDocParser\Parser\PhpDocParser;
+use PHPStan\PhpDocParser\Parser\TokenIterator;
+use PHPStan\PhpDocParser\Parser\TypeParser;
+use PHPStan\PhpDocParser\ParserConfig;
 use PHPStan\PhpDocParser\Printer\Printer;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionNamedType;
+use Throwable;
 
 /**
  * @internal
@@ -152,6 +162,24 @@ final readonly class DocBlockGenerator
                 '01' => '@property-write',
                 default => '@property',
             };
+
+            $existingPropertyIndex = null;
+            $targetPropertyName = '$'.$accessor['name'];
+
+            foreach ($properties as $index => $tag) {
+                if (! $tag->value instanceof PropertyTagValueNode) {
+                    continue;
+                }
+
+                if ($tag->value->propertyName === $targetPropertyName) {
+                    $existingPropertyIndex = $index;
+                    break;
+                }
+            }
+
+            if ($existingPropertyIndex !== null) {
+                unset($properties[$existingPropertyIndex]);
+            }
 
             $properties[] = new PhpDocTagNode($name, $propertyTag);
         }
@@ -378,7 +406,7 @@ final readonly class DocBlockGenerator
         $setProperty->setAccessible(true);
         $setCallback = $setProperty->getValue($attribute);
 
-        $type = $this->determineAttributeType($getCallback);
+        $type = $this->determineAttributeTypeFromMethodDocBlock($method) ?? $this->determineAttributeType($getCallback);
 
         return [
             'name' => $method->getName(),
@@ -387,6 +415,64 @@ final readonly class DocBlockGenerator
             'writable' => $setCallback !== null,
         ];
 
+    }
+
+    /**
+     * Determine Attribute read type from method docblock.
+     *
+     * Supports:
+     * - @return Attribute<array<int, string>, null>
+     * - @return \Illuminate\Database\Eloquent\Casts\Attribute<Collection<int, string>|null, mixed>
+     */
+    private function determineAttributeTypeFromMethodDocBlock(ReflectionMethod $method): ?string
+    {
+        $docComment = $method->getDocComment();
+
+        if ($docComment === false) {
+            return null;
+        }
+
+        try {
+            $parserConfig = new ParserConfig([]);
+            $constExprParser = new ConstExprParser($parserConfig);
+            $typeParser = new TypeParser($parserConfig, $constExprParser);
+            $phpDocParser = new PhpDocParser($parserConfig, $typeParser, $constExprParser);
+            $tokenIterator = new TokenIterator((new Lexer($parserConfig))->tokenize($docComment));
+            $phpDocNode = $phpDocParser->parse($tokenIterator);
+        } catch (Throwable) {
+            return null;
+        }
+
+        foreach ($phpDocNode->children as $child) {
+            if (! $child instanceof PhpDocTagNode || $child->name !== '@return') {
+                continue;
+            }
+
+            if (! $child->value instanceof ReturnTagValueNode) {
+                continue;
+            }
+
+            $returnType = $child->value->type;
+
+            if (! $returnType instanceof GenericTypeNode) {
+                continue;
+            }
+
+            $baseType = mb_ltrim($returnType->type->name, '\\');
+            if (! in_array($baseType, ['Attribute', 'Illuminate\\Database\\Eloquent\\Casts\\Attribute'], true)) {
+                continue;
+            }
+
+            $readType = $returnType->genericTypes[0] ?? null;
+
+            if (! $readType instanceof TypeNode) {
+                continue;
+            }
+
+            return new Printer()->print($readType);
+        }
+
+        return null;
     }
 
     /**

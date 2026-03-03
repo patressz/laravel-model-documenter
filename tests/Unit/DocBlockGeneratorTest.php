@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Patressz\LaravelModelDocumenter\DocBlockGenerator;
 use Patressz\LaravelModelDocumenter\Resolvers\DatabaseColumnTypeResolver;
 use Patressz\LaravelModelDocumenter\Resolvers\ModelCastTypeResolver;
+use Workbench\App\Models\AccessorDocModel;
 use Workbench\App\Models\User;
 
 /**
@@ -413,5 +414,11 @@ describe('DocBlockGenerator', function () {
         EOD;
 
         expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
+    });
+
+    it('prefers Attribute generic type from method docblock', function () {
+        $docBlock = $this->generator->generate([], AccessorDocModel::class);
+
+        expect($docBlock)->toContain('@property-read array<int, string> $phoneArray');
     });
 });
