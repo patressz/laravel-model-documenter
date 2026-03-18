@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.1.0 - 2026-03-18
+
+Adds laravel 13 support.
+
+### What's Changed
+
+* feat(upgrade): adds laravel 13 support by @patressz in https://github.com/patressz/laravel-model-documenter/pull/2
+
+**Full Changelog**: https://github.com/patressz/laravel-model-documenter/compare/v1.0.4...v1.1.0
+
 ## v1.0.4 - 2026-03-03
 
 **Full Changelog**: https://github.com/patressz/laravel-model-documenter/compare/v1.0.3...v1.0.4
