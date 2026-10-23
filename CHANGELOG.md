@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.1.1 - 2026-10-23
+
+### Fixed
+
+* fix: keep class name case in parameterized cast types (4394696)
+  Casts such as `AsEnumCollection::of(RentalUnit::class)` are lowercased by Eloquent's `getCastType()`, which produced `\App\Enums\Rentalunit`. The original cast definition is now used, so multi-word class names keep their case.
+
+### Changed
+
+* chore: apply current Rector rules and drop removed `strictBooleans` option (bdf10a9)
+
+**Full Changelog**: https://github.com/patressz/laravel-model-documenter/compare/v1.1.0...v1.1.1
+
 ## v1.1.0 - 2026-03-18
 
 Adds laravel 13 support.
