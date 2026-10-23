@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.1.2 - 2026-10-23
+
+### Fixed
+
+* fix: compare imported and fully qualified class names in test and CI modes (569284b)
+  Formatters such as Pint import the generated fully qualified class names, so `--ci` and `--test` reported every formatted model as outdated. Class names in `@property` and `@method` types are now expanded using the model's imports and namespace before comparing.
+
+**Full Changelog**: https://github.com/patressz/laravel-model-documenter/compare/v1.1.1...v1.1.2
+
 ## v1.1.1 - 2026-10-23
 
 ### Fixed
