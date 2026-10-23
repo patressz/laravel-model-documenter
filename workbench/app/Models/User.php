@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Workbench\App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\AsEnumCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Workbench\App\Enums\NotificationChannel;
 
 final class User extends Authenticatable
 {
@@ -46,6 +48,7 @@ final class User extends Authenticatable
             'password' => 'hashed',
             'birth_date' => 'date',
             'deleted_at' => 'immutable_datetime',
+            'notification_channels' => AsEnumCollection::of(NotificationChannel::class),
         ];
     }
 }

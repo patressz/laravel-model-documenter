@@ -227,10 +227,14 @@ final readonly class DocBlockGenerator
         if (array_key_exists($column['name'], $casts)) {
             $reflectionClass = new ReflectionClass($model);
             $method = $reflectionClass->getMethod('getCastType');
-            $method->setAccessible(true);
 
             /** @var string $castType */
             $castType = $method->invoke($model, $column['name']);
+            $originalCast = $casts[$column['name']];
+
+            if (is_string($originalCast) && $this->isParameterizedClassCast($originalCast)) {
+                $castType = $originalCast;
+            }
 
             return $this->castResolver->resolve($castType);
         }
@@ -240,6 +244,17 @@ final readonly class DocBlockGenerator
         }
 
         return $this->typeResolver->resolve($column['type_name']);
+    }
+
+    /**
+     * Determine whether the cast is a class cast with arguments, such as AsEnumCollection::of(Status::class).
+     *
+     * Eloquent lowercases these casts in getCastType(), so the original definition must be used to keep the class name case.
+     */
+    private function isParameterizedClassCast(string $cast): bool
+    {
+        return str_contains($cast, ':')
+            && class_exists(Str::before($cast, ':'));
     }
 
     /**
@@ -289,14 +304,12 @@ final readonly class DocBlockGenerator
 
         // Get the related model class
         $relatedProperty = $relationReflection->getProperty('related');
-        $relatedProperty->setAccessible(true);
         $relatedModel = $relatedProperty->getValue($relation);
 
         $foreignKey = null;
 
         if ($relationReflection->hasProperty('foreignKey')) {
             $foreignProperty = $relationReflection->getProperty('foreignKey');
-            $foreignProperty->setAccessible(true);
             $foreignKeyValue = $foreignProperty->getValue($relation);
             $foreignKey = is_string($foreignKeyValue) ? $foreignKeyValue : null;
         }
@@ -352,7 +365,6 @@ final readonly class DocBlockGenerator
         $reflectionClass = new ReflectionClass($model);
 
         $method = $reflectionClass->getMethod('getMutatorMethods');
-        $method->setAccessible(true);
         $oldAccessors = $method->invoke($model, $model);
 
         if (is_iterable($oldAccessors)) {
@@ -399,11 +411,9 @@ final readonly class DocBlockGenerator
         $attributeReflection = new ReflectionClass($attribute);
 
         $getProperty = $attributeReflection->getProperty('get');
-        $getProperty->setAccessible(true);
         $getCallback = $getProperty->getValue($attribute);
 
         $setProperty = $attributeReflection->getProperty('set');
-        $setProperty->setAccessible(true);
         $setCallback = $setProperty->getValue($attribute);
 
         $type = $this->determineAttributeTypeFromMethodDocBlock($method) ?? $this->determineAttributeType($getCallback);
@@ -459,7 +469,7 @@ final readonly class DocBlockGenerator
             }
 
             $baseType = mb_ltrim($returnType->type->name, '\\');
-            if (! in_array($baseType, ['Attribute', 'Illuminate\\Database\\Eloquent\\Casts\\Attribute'], true)) {
+            if (! in_array($baseType, ['Attribute', Attribute::class], true)) {
                 continue;
             }
 
@@ -533,7 +543,7 @@ final readonly class DocBlockGenerator
             }
 
             foreach ($reflectionMethod->getAttributes() as $attribute) {
-                if ($attribute->getName() === 'Illuminate\Database\Eloquent\Attributes\Scope') {
+                if ($attribute->getName() === \Illuminate\Database\Eloquent\Attributes\Scope::class) {
                     $methodName = $reflectionMethod->getName();
 
                     if (! in_array($methodName, array_column($localScopes, 'name'))) {

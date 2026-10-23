@@ -10,8 +10,8 @@ use Illuminate\Database\Eloquent\Casts\AsStringable;
 use Patressz\LaravelModelDocumenter\Resolvers\ModelCastTypeResolver;
 use Workbench\App\Models\User;
 
-describe('ModelCastTypeResolver', function () {
-    it('resolves collection cast correctly', function (string $castType) {
+describe('ModelCastTypeResolver', function (): void {
+    it('resolves collection cast correctly', function (string $castType): void {
         $resolver = new ModelCastTypeResolver();
 
         expect($resolver->resolve($castType))->toBe('\Illuminate\Support\Collection<int, \Workbench\App\Models\User>');
@@ -20,13 +20,20 @@ describe('ModelCastTypeResolver', function () {
         '\Illuminate\Database\Eloquent\Casts\AsEnumCollection:Workbench\App\Models\User',
     ]);
 
-    it('resolves enum array object cast correctly', function () {
+    it('keeps the case of multi-word class names in collection casts', function (): void {
+        $resolver = new ModelCastTypeResolver();
+
+        expect($resolver->resolve('Illuminate\Database\Eloquent\Casts\AsEnumCollection:Workbench\App\Enums\NotificationChannel'))
+            ->toBe('\Illuminate\Support\Collection<int, \Workbench\App\Enums\NotificationChannel>');
+    });
+
+    it('resolves enum array object cast correctly', function (): void {
         $resolver = new ModelCastTypeResolver();
 
         expect($resolver->resolve(AsEnumArrayObject::of(User::class)))->toBe('\ArrayObject<int, \Workbench\App\Models\User>');
     });
 
-    it('resolves integer cast to `int`', function (string $castType) {
+    it('resolves integer cast to `int`', function (string $castType): void {
         $resolver = new ModelCastTypeResolver();
         expect($resolver->resolve($castType))->toBe('int');
     })->with([
@@ -34,7 +41,7 @@ describe('ModelCastTypeResolver', function () {
         'integer',
     ]);
 
-    it('resolves decimal cast to `float`', function (string $castType) {
+    it('resolves decimal cast to `float`', function (string $castType): void {
         $resolver = new ModelCastTypeResolver();
         expect($resolver->resolve($castType))->toBe('float');
     })->with([
@@ -44,12 +51,12 @@ describe('ModelCastTypeResolver', function () {
         'decimal',
     ]);
 
-    it('resolves string cast to `string`', function () {
+    it('resolves string cast to `string`', function (): void {
         $resolver = new ModelCastTypeResolver();
         expect($resolver->resolve('string'))->toBe('string');
     });
 
-    it('resolves boolean cast to `bool`', function (string $castType) {
+    it('resolves boolean cast to `bool`', function (string $castType): void {
         $resolver = new ModelCastTypeResolver();
         expect($resolver->resolve($castType))->toBe('bool');
     })->with([
@@ -57,12 +64,12 @@ describe('ModelCastTypeResolver', function () {
         'boolean',
     ]);
 
-    it('resolves object cast to `object`', function () {
+    it('resolves object cast to `object`', function (): void {
         $resolver = new ModelCastTypeResolver();
         expect($resolver->resolve('object'))->toBe('object');
     });
 
-    it('resolves array cast to `array<array-key, mixed>`', function (string $castType) {
+    it('resolves array cast to `array<array-key, mixed>`', function (string $castType): void {
         $resolver = new ModelCastTypeResolver();
         expect($resolver->resolve($castType))->toBe('array<array-key, mixed>');
     })->with([
@@ -71,7 +78,7 @@ describe('ModelCastTypeResolver', function () {
         'json:unicode',
     ]);
 
-    it('resolves encrypted collection cast to `\Illuminate\Support\Collection`', function (string $castType) {
+    it('resolves encrypted collection cast to `\Illuminate\Support\Collection`', function (string $castType): void {
         $resolver = new ModelCastTypeResolver();
         expect($resolver->resolve($castType))->toBe('\Illuminate\Support\Collection');
     })->with([
@@ -79,14 +86,14 @@ describe('ModelCastTypeResolver', function () {
         AsEncryptedCollection::class,
     ]);
 
-    it('resolves collection cast to `\Illuminate\Support\Collection`', function (string $castType) {
+    it('resolves collection cast to `\Illuminate\Support\Collection`', function (string $castType): void {
         $resolver = new ModelCastTypeResolver();
         expect($resolver->resolve($castType))->toBe('\Illuminate\Support\Collection<array-key, mixed>');
     })->with([
         'collection',
     ]);
 
-    it('resolves datetime cast to `\Illuminate\Support\Carbon`', function (string $castType) {
+    it('resolves datetime cast to `\Illuminate\Support\Carbon`', function (string $castType): void {
         $resolver = new ModelCastTypeResolver();
         expect($resolver->resolve($castType))->toBe('\Illuminate\Support\Carbon');
     })->with([
@@ -96,7 +103,7 @@ describe('ModelCastTypeResolver', function () {
         'timestamp',
     ]);
 
-    it('resolves immutable datetime cast to `\Carbon\CarbonImmutable`', function (string $castType) {
+    it('resolves immutable datetime cast to `\Carbon\CarbonImmutable`', function (string $castType): void {
         $resolver = new ModelCastTypeResolver();
         expect($resolver->resolve($castType))->toBe('\Carbon\CarbonImmutable');
     })->with([
@@ -105,7 +112,7 @@ describe('ModelCastTypeResolver', function () {
         'immutable_custom_datetime',
     ]);
 
-    it('resolves hashed/encrypted cast to `string`', function (string $castType) {
+    it('resolves hashed/encrypted cast to `string`', function (string $castType): void {
         $resolver = new ModelCastTypeResolver();
         expect($resolver->resolve($castType))->toBe('string');
     })->with([
@@ -113,7 +120,7 @@ describe('ModelCastTypeResolver', function () {
         'encrypted',
     ]);
 
-    it('resolves encrypted array cast to `array`', function (string $castType) {
+    it('resolves encrypted array cast to `array`', function (string $castType): void {
         $resolver = new ModelCastTypeResolver();
         expect($resolver->resolve($castType))->toBe('array');
     })->with([
@@ -121,19 +128,19 @@ describe('ModelCastTypeResolver', function () {
         'encrypted:json',
     ]);
 
-    it('resolves encrypted object cast to `object`', function (string $castType) {
+    it('resolves encrypted object cast to `object`', function (string $castType): void {
         $resolver = new ModelCastTypeResolver();
         expect($resolver->resolve($castType))->toBe('object');
     })->with([
         'encrypted:object',
     ]);
 
-    it('resolves AsStringable cast to `\Illuminate\Support\Stringable`', function () {
+    it('resolves AsStringable cast to `\Illuminate\Support\Stringable`', function (): void {
         $resolver = new ModelCastTypeResolver();
         expect($resolver->resolve(AsStringable::class))->toBe('\Illuminate\Support\Stringable');
     });
 
-    it('resolves AsArrayObject cast to `\ArrayObject`', function (string $castType) {
+    it('resolves AsArrayObject cast to `\ArrayObject`', function (string $castType): void {
         $resolver = new ModelCastTypeResolver();
         expect($resolver->resolve($castType))->toBe('\ArrayObject');
     })->with([
@@ -141,7 +148,7 @@ describe('ModelCastTypeResolver', function () {
         AsEncryptedArrayObject::class,
     ]);
 
-    it('resolves unknown cast type to `mixed`', function () {
+    it('resolves unknown cast type to `mixed`', function (): void {
         $resolver = new ModelCastTypeResolver();
         expect($resolver->resolve('unknown_cast_type'))->toBe('mixed');
     });

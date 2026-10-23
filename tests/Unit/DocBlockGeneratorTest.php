@@ -16,15 +16,15 @@ function normalizeLineEndings(string $text): string
     return str_replace(["\r\n", "\r"], "\n", $text);
 }
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->generator = new DocBlockGenerator(
         new DatabaseColumnTypeResolver,
         new ModelCastTypeResolver
     );
 });
 
-describe('DocBlockGenerator', function () {
-    it('generates property tag for simple column', function () {
+describe('DocBlockGenerator', function (): void {
+    it('generates property tag for simple column', function (): void {
         $columns = [
             [
                 'name' => 'id',
@@ -50,7 +50,7 @@ describe('DocBlockGenerator', function () {
         expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
     });
 
-    it('generates nullable property tag', function () {
+    it('generates nullable property tag', function (): void {
         $columns = [
             [
                 'name' => 'description',
@@ -76,7 +76,7 @@ describe('DocBlockGenerator', function () {
         expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
     });
 
-    it('generates property tag with column comment', function () {
+    it('generates property tag with column comment', function (): void {
         $columns = [
             [
                 'name' => 'status',
@@ -102,7 +102,7 @@ describe('DocBlockGenerator', function () {
         expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
     });
 
-    it('handles created_at and updated_at timestamps correctly', function () {
+    it('handles created_at and updated_at timestamps correctly', function (): void {
         $columns = [
             [
                 'name' => 'created_at',
@@ -140,7 +140,7 @@ describe('DocBlockGenerator', function () {
         expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
     });
 
-    it('handles casted properties correctly', function () {
+    it('handles casted properties correctly', function (): void {
         $columns = [
             [
                 'name' => 'birth_date',
@@ -178,7 +178,33 @@ describe('DocBlockGenerator', function () {
         expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
     });
 
-    it('handles different numeric types correctly', function () {
+    it('keeps the class name case of parameterized class casts', function (): void {
+        $columns = [
+            [
+                'name' => 'notification_channels',
+                'type_name' => 'json',
+                'type' => 'json',
+                'collation' => null,
+                'nullable' => true,
+                'default' => null,
+                'auto_increment' => false,
+                'comment' => null,
+                'generation' => null,
+            ],
+        ];
+
+        $docBlock = $this->generator->generate($columns, User::class);
+
+        $expectedDocBlock = <<<'EOD'
+        /**
+         * @property ?\Illuminate\Support\Collection<int, \Workbench\App\Enums\NotificationChannel> $notification_channels
+         */
+        EOD;
+
+        expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
+    });
+
+    it('handles different numeric types correctly', function (): void {
         $columns = [
             [
                 'name' => 'age',
@@ -228,7 +254,7 @@ describe('DocBlockGenerator', function () {
         expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
     });
 
-    it('handles text column types correctly', function () {
+    it('handles text column types correctly', function (): void {
         $columns = [
             [
                 'name' => 'name',
@@ -278,7 +304,7 @@ describe('DocBlockGenerator', function () {
         expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
     });
 
-    it('handles boolean columns correctly', function () {
+    it('handles boolean columns correctly', function (): void {
         $columns = [
             [
                 'name' => 'is_active',
@@ -316,7 +342,7 @@ describe('DocBlockGenerator', function () {
         expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
     });
 
-    it('handles json columns correctly', function () {
+    it('handles json columns correctly', function (): void {
         $columns = [
             [
                 'name' => 'metadata',
@@ -354,7 +380,7 @@ describe('DocBlockGenerator', function () {
         expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
     });
 
-    it('handles mixed column types in single generation', function () {
+    it('handles mixed column types in single generation', function (): void {
         $columns = [
             [
                 'name' => 'id',
@@ -416,7 +442,7 @@ describe('DocBlockGenerator', function () {
         expect(normalizeLineEndings($docBlock))->toBe(normalizeLineEndings($expectedDocBlock));
     });
 
-    it('prefers Attribute generic type from method docblock', function () {
+    it('prefers Attribute generic type from method docblock', function (): void {
         $docBlock = $this->generator->generate([], AccessorDocModel::class);
 
         expect($docBlock)->toContain('@property-read array<int, string> $phoneArray');

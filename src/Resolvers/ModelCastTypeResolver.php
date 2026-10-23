@@ -48,9 +48,7 @@ final class ModelCastTypeResolver
                 $castType = Str::of($matches[0])
                     ->whenStartsWith(',', fn (Stringable $value) => $value->trim(','))
                     ->whenEndsWith(',', fn (Stringable $value) => $value->trim(','))
-                    ->explode('\\')
-                    ->map(fn (string $part) => ucfirst($part))
-                    ->implode('\\');
+                    ->toString();
 
                 return sprintf('%s<int, \%s>', $item['class_name'], $castType);
             }
