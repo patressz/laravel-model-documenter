@@ -6,6 +6,7 @@ namespace Patressz\LaravelModelDocumenter\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Schema;
+use Patressz\LaravelModelDocumenter\DocBlockComparator;
 use Patressz\LaravelModelDocumenter\DocBlockGenerator;
 use Patressz\LaravelModelDocumenter\ModelDocumenter;
 use Patressz\LaravelModelDocumenter\ModelFinder;
@@ -35,6 +36,7 @@ final class GenerateDocCommand extends Command
     public function __construct(
         private readonly DocBlockGenerator $docBlockGenerator,
         private readonly ModelFinder $modelFinder,
+        private readonly DocBlockComparator $docBlockComparator,
     ) {
         parent::__construct();
     }
@@ -188,7 +190,7 @@ final class GenerateDocCommand extends Command
             $currentDocBlock = '';
         }
 
-        $isUpToDate = $this->isDocumentationUpToDate($currentDocBlock, $expectedDocBlock);
+        $isUpToDate = $this->docBlockComparator->matches($currentDocBlock, $expectedDocBlock, $modelClass);
 
         if ($ciMode) {
             if (! $isUpToDate) {
@@ -196,7 +198,11 @@ final class GenerateDocCommand extends Command
                 exit(1);
             }
         } else {
-            $this->displayComparison($currentDocBlock, $expectedDocBlock, $modelClass);
+            $this->displayComparison(
+                $this->docBlockComparator->normalize($currentDocBlock, $modelClass),
+                $this->docBlockComparator->normalize($expectedDocBlock, $modelClass),
+                $modelClass,
+            );
         }
     }
 
@@ -223,7 +229,7 @@ final class GenerateDocCommand extends Command
 
             $currentDocBlock ??= '';
 
-            $isUpToDate = $this->isDocumentationUpToDate($currentDocBlock, $expectedDocBlock);
+            $isUpToDate = $this->docBlockComparator->matches($currentDocBlock, $expectedDocBlock, $classString);
 
             if ($ciMode) {
                 if (! $isUpToDate) {
@@ -263,17 +269,6 @@ final class GenerateDocCommand extends Command
         }
 
         return null;
-    }
-
-    /**
-     * Check if documentation is up to date.
-     */
-    private function isDocumentationUpToDate(string $current, string $expected): bool
-    {
-        $currentLines = explode("\n", mb_trim($current));
-        $expectedLines = explode("\n", mb_trim($expected));
-
-        return $currentLines === $expectedLines;
     }
 
     /**
