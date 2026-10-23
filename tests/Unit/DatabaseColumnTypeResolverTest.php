@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use Patressz\LaravelModelDocumenter\Resolvers\DatabaseColumnTypeResolver;
 
-describe('DatabaseColumnTypeResolver', function () {
-    it('resolves string types to `string`', function (string $type) {
+describe('DatabaseColumnTypeResolver', function (): void {
+    it('resolves string types to `string`', function (string $type): void {
         $resolver = new DatabaseColumnTypeResolver();
         expect($resolver->resolve($type))->toBe('string');
     })->with([
@@ -31,7 +31,7 @@ describe('DatabaseColumnTypeResolver', function () {
         'xml',
     ]);
 
-    it('resolves integer types to `int`', function (string $type) {
+    it('resolves integer types to `int`', function (string $type): void {
         $resolver = new DatabaseColumnTypeResolver();
         expect($resolver->resolve($type))->toBe('int');
     })->with([
@@ -56,7 +56,7 @@ describe('DatabaseColumnTypeResolver', function () {
         'unsigned big int',
     ]);
 
-    it('resolves decimal types to `float`', function (string $type) {
+    it('resolves decimal types to `float`', function (string $type): void {
         $resolver = new DatabaseColumnTypeResolver();
         expect($resolver->resolve($type))->toBe('float');
     })->with([
@@ -74,7 +74,7 @@ describe('DatabaseColumnTypeResolver', function () {
         'money',
     ]);
 
-    it('resolves boolean types to `bool`', function (string $type) {
+    it('resolves boolean types to `bool`', function (string $type): void {
         $resolver = new DatabaseColumnTypeResolver();
         expect($resolver->resolve($type))->toBe('bool');
     })->with([
@@ -82,7 +82,7 @@ describe('DatabaseColumnTypeResolver', function () {
         'boolean',
     ]);
 
-    it('resolves date/time types to `string`', function (string $type) {
+    it('resolves date/time types to `string`', function (string $type): void {
         $resolver = new DatabaseColumnTypeResolver();
         expect($resolver->resolve($type))->toBe('string');
     })->with([
@@ -98,7 +98,7 @@ describe('DatabaseColumnTypeResolver', function () {
         'interval',
     ]);
 
-    it('resolves JSON types to `string`', function (string $type) {
+    it('resolves JSON types to `string`', function (string $type): void {
         $resolver = new DatabaseColumnTypeResolver();
         expect($resolver->resolve($type))->toBe('string');
     })->with([
@@ -106,7 +106,7 @@ describe('DatabaseColumnTypeResolver', function () {
         'jsonb',
     ]);
 
-    it('resolves bit types to `string`', function (string $type) {
+    it('resolves bit types to `string`', function (string $type): void {
         $resolver = new DatabaseColumnTypeResolver();
         expect($resolver->resolve($type))->toBe('string');
     })->with([
@@ -115,7 +115,7 @@ describe('DatabaseColumnTypeResolver', function () {
         'varbit',
     ]);
 
-    it('resolves network types to `string`', function (string $type) {
+    it('resolves network types to `string`', function (string $type): void {
         $resolver = new DatabaseColumnTypeResolver();
         expect($resolver->resolve($type))->toBe('string');
     })->with([
@@ -127,7 +127,7 @@ describe('DatabaseColumnTypeResolver', function () {
         'macaddr8',
     ]);
 
-    it('resolves geometric types to `string`', function (string $type) {
+    it('resolves geometric types to `string`', function (string $type): void {
         $resolver = new DatabaseColumnTypeResolver();
         expect($resolver->resolve($type))->toBe('string');
     })->with([
@@ -140,7 +140,7 @@ describe('DatabaseColumnTypeResolver', function () {
         'circle',
     ]);
 
-    it('resolves PostgreSQL specific types to `string`', function (string $type) {
+    it('resolves PostgreSQL specific types to `string`', function (string $type): void {
         $resolver = new DatabaseColumnTypeResolver();
         expect($resolver->resolve($type))->toBe('string');
     })->with([
@@ -154,7 +154,7 @@ describe('DatabaseColumnTypeResolver', function () {
         'row',
     ]);
 
-    it('resolves types with parameters correctly', function (string $type, string $expected) {
+    it('resolves types with parameters correctly', function (string $type, string $expected): void {
         $resolver = new DatabaseColumnTypeResolver();
         expect($resolver->resolve($type))->toBe($expected);
     })->with([
@@ -165,12 +165,12 @@ describe('DatabaseColumnTypeResolver', function () {
         ['float(7,4)', 'float'],
     ]);
 
-    it('resolves unknown type to `string`', function () {
+    it('resolves unknown type to `string`', function (): void {
         $resolver = new DatabaseColumnTypeResolver();
         expect($resolver->resolve('unknown_type'))->toBe('string');
     });
 
-    it('handles case insensitive type names', function (string $type, string $expected) {
+    it('handles case insensitive type names', function (string $type, string $expected): void {
         $resolver = new DatabaseColumnTypeResolver();
         expect($resolver->resolve($type))->toBe($expected);
     })->with([

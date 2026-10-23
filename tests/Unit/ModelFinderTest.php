@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Patressz\LaravelModelDocumenter\ModelFinder;
 
-it('skips abstract models when finding classes in directory', function () {
+it('skips abstract models when finding classes in directory', function (): void {
     $directory = sys_get_temp_dir().'/model-finder-'.uniqid('', true);
 
     mkdir($directory, 0777, true);

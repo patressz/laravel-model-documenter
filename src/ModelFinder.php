@@ -38,7 +38,7 @@ final class ModelFinder
         foreach ($files as $file) {
             $className = $this->getClassNameFromFile($file->getRealPath());
 
-            if ($className !== null && $className !== '' && $className !== '0') {
+            if (! in_array($className, [null, '', '0'], true)) {
                 $models[] = [
                     'class' => $className,
                     'file' => $file->getRealPath(),
@@ -103,11 +103,11 @@ final class ModelFinder
             return null;
         }
 
-        if ($visitor->className === null || $visitor->className === '' || $visitor->className === '0') {
+        if (in_array($visitor->className, [null, '', '0'], true)) {
             return null;
         }
 
-        return $visitor->namespace !== null && $visitor->namespace !== '' && $visitor->namespace !== '0'
+        return ! in_array($visitor->namespace, [null, '', '0'], true)
             ? $visitor->namespace.'\\'.$visitor->className
             : $visitor->className;
     }

@@ -221,9 +221,7 @@ final class GenerateDocCommand extends Command
             $currentDocBlock = $this->extractCurrentDocBlock($classString);
             $expectedDocBlock = $this->getExpectedDocBlock($classString);
 
-            if ($currentDocBlock === null) {
-                $currentDocBlock = '';
-            }
+            $currentDocBlock ??= '';
 
             $isUpToDate = $this->isDocumentationUpToDate($currentDocBlock, $expectedDocBlock);
 
@@ -237,7 +235,7 @@ final class GenerateDocCommand extends Command
             }
         }
 
-        if ($ciMode && ! empty($outdatedModels)) {
+        if ($ciMode && $outdatedModels !== []) {
             $this->error('PHPDoc outdated in '.count($outdatedModels).' model(s):');
             foreach ($outdatedModels as $model) {
                 $this->line("  - {$model}");
@@ -245,7 +243,7 @@ final class GenerateDocCommand extends Command
             exit(1);
         }
 
-        if ($ciMode && empty($outdatedModels)) {
+        if ($ciMode) {
             $this->info('All PHPDoc blocks are up to date ✓');
         }
     }

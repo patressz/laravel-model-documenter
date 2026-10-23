@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Patressz\LaravelModelDocumenter\FileUpdater;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->fileUpdater = new FileUpdater();
 
     // Create a temporary test model file
@@ -30,14 +30,14 @@ protected $fillable = [
     file_put_contents($this->testFilePath, $this->originalContent);
 });
 
-afterEach(function () {
+afterEach(function (): void {
     // Clean up test file
     if (file_exists($this->testFilePath)) {
         unlink($this->testFilePath);
     }
 });
-describe('FileUpdater', function () {
-    it('updates docblock for a model class without existing docblock', function () {
+describe('FileUpdater', function (): void {
+    it('updates docblock for a model class without existing docblock', function (): void {
         $docBlockContent = '/**
  * @property int $id
  * @property string $name
@@ -57,7 +57,7 @@ describe('FileUpdater', function () {
         expect($updatedContent)->toContain('protected $fillable = [');
     });
 
-    it('replaces existing docblock with new one', function () {
+    it('replaces existing docblock with new one', function (): void {
         // First, create a file with existing docblock
         $contentWithExistingDocBlock = '<?php
 
@@ -95,7 +95,7 @@ class TestModelForFileUpdater extends Model
         expect($updatedContent)->not()->toContain('@property string $old_property');
     });
 
-    it('preserves file formatting and structure', function () {
+    it('preserves file formatting and structure', function (): void {
         $docBlockContent = '/**
  * @property int $id
  * @property string $name
@@ -115,7 +115,7 @@ class TestModelForFileUpdater extends Model
         expect($updatedContent)->toContain('\'email\',');
     });
 
-    it('handles complex docblock with multiple property types', function () {
+    it('handles complex docblock with multiple property types', function (): void {
         $complexDocBlock = '/**
  * @property int $id
  * @property string $name
@@ -142,7 +142,7 @@ class TestModelForFileUpdater extends Model
         expect($updatedContent)->toContain('@method static Builder<static>|User active()');
     });
 
-    it('handles file reading errors gracefully', function () {
+    it('handles file reading errors gracefully', function (): void {
         // Create a file and then make it unreadable (if possible on the system)
         $tempFile = __DIR__.'/UnreadableFile.php';
         file_put_contents($tempFile, '<?php class Test {}');
@@ -162,7 +162,7 @@ class TestModelForFileUpdater extends Model
         }
     })->skip('Permission tests can be unreliable across different systems');
 
-    it('throws exception for unparseable file', function () {
+    it('throws exception for unparseable file', function (): void {
         $invalidPhpFile = __DIR__.'/InvalidPhp.php';
         file_put_contents($invalidPhpFile, '<?php this is not valid php syntax {');
 
@@ -176,7 +176,7 @@ class TestModelForFileUpdater extends Model
         }
     });
 
-    it('works with real workbench model', function () {
+    it('works with real workbench model', function (): void {
         $postModelPath = realpath(__DIR__.'/../../workbench/app/Models/Post.php');
 
         if (! $postModelPath) {
